@@ -1,0 +1,73 @@
+version: "3.12"
+
+services:
+  product_srv:
+    build: ./product_srv
+    container_name: product_srv
+    ports:
+      - "8001:8000"
+    depends_on:
+      - product_db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@product_db:5432/products_db
+
+  product_db:
+    image: postgres:15
+    container_name: product_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: products_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - product_pgdata:/var/lib/postgresql/data
+
+  delivery_srv:
+    build: ./delivery_srv
+    container_name: delivery_srv
+    ports:
+      - "8002:8000"
+    depends_on:
+      - delivery_db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@delivery_db:5432/delivery_db
+
+  delivery_db:
+    image: postgres:15
+    container_name: delivery_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: delivery_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - delivery_pgdata:/var/lib/postgresql/data
+
+  order_srv:
+    build: ./order_srv
+    container_name: order_srv
+    ports:
+      - "8003:8000"
+    depends_on:
+      - order_db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@order_db:5432/orders_db
+
+  order_db:
+    image: postgres:15
+    container_name: order_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - order_pgdata:/var/lib/postgresql/data
+
+volumes:
+  product_pgdata:
+  delivery_pgdata:
+  order_pgdata:
